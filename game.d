@@ -6,12 +6,13 @@ import stdext;
 
 import std.conv;
 import std.stdio;
+import std.typecons;
 
 /// Player type.
 enum Player
 {
-    x, 
-    o
+    x,
+    O
 }
 
 /// Manages gameplay.
@@ -46,7 +47,16 @@ public:
                     break;
 
                 default:
-                    m_board.setField(charNum(input[0]) - 1, charNum(input[1]) - 1, FieldValue.O);
+                    auto chosenField = tuple(charNum(input[0]) - 1, charNum(input[1]) - 1);
+
+                    if (m_board.isFieldAvailable(chosenField))
+                    {
+                        m_board.setField(chosenField, FieldValue.O);
+                    }
+                    else
+                    {
+                        m_io.addMessageToQueue("Non empty field chosen!");
+                    }
                     break;
             }
 

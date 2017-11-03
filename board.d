@@ -1,6 +1,7 @@
 module board;
 import io;
 import std.conv;
+import std.typecons;
 
 /// Board field values, empty by default.
 enum FieldValue
@@ -13,7 +14,7 @@ enum FieldValue
 class Board
 {
 public:
-    this ()
+    this()
     {
         foreach(row; m_fields)
         {
@@ -39,17 +40,23 @@ public:
         }
     }
 
+    /// Check if field can be set
+    bool isFieldAvailable(T)(T field)
+    {
+        return m_fields[field[0]][field[1]] == FieldValue.EMPTY;
+    }
+
     /// Sets field on (x, y) to specified value.
-    void setField(immutable int x, immutable int y, FieldValue value)
+    void setField(T)(T field, FieldValue value)
     {
         switch(value)
         {
             case FieldValue.X:
-                m_fields[x][y] = FieldValue.X; 
+                m_fields[field[0]][field[1]] = FieldValue.X; 
                 break;
 
             case FieldValue.O:
-                m_fields[x][y] = FieldValue.O;
+                m_fields[field[0]][field[1]] = FieldValue.O;
                 break;
                 
             default:
