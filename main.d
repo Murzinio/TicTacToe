@@ -1,4 +1,5 @@
 import game;
+@system:
 
 import std.stdio;
 

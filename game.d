@@ -1,4 +1,5 @@
 module game;
+@safe:
 
 import board;
 import io;
@@ -20,7 +21,7 @@ class Game
 {
 public:
     /// Game loop, runs until exit is requested.
-    void mainLoop()
+    @system void mainLoop()
     {
         string input;
 

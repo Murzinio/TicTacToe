@@ -1,4 +1,6 @@
 module board;
+@safe:
+
 import io;
 import std.conv;
 import std.typecons;
@@ -73,4 +75,12 @@ private:
     ];
 
     auto m_io = new Io();
+
+    @safe unittest
+    {
+        auto board = new Board;
+
+        board.setField(tuple(2, 2), FieldValue.O);
+        assert(board.m_fields[2][2] ==  FieldValue.O, "invalid field set in setField"); 
+    }
 }
