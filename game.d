@@ -12,8 +12,8 @@ import std.typecons;
 /// Player type.
 enum Player
 {
-    x,
-    O
+    X = FieldValue.X,
+    O = FieldValue.O
 }
 
 /// Manages gameplay.
@@ -52,7 +52,7 @@ public:
 
                     if (m_board.isFieldAvailable(chosenField))
                     {
-                        m_board.setField(chosenField, FieldValue.O);
+                        m_board.setField(chosenField, m_currentPlayer);
                     }
                     else
                     {
@@ -61,12 +61,33 @@ public:
                     break;
             }
 
+            if (m_board.areAllFieldsFilled())
+            {
+                m_io.addMessageToQueue("Draw!");
+                m_io.drawAll();
+                m_exitRequested = true;
+            }
+
+            if (m_board.anyThreeAdjacentFieldsEqual())
+            {
+                m_io.addMessageToQueue("Player " ~ m_currentPlayer ~ " won the game!");
+                m_io.drawAll();
+                m_exitRequested = true;
+            }
+        
+            if (input != "\0")
+            {
+                switchPlayer();
+            }
+
             if (!m_exitRequested)
             {
                 m_board.draw();
                 m_io.drawAll();
             }
+        
         }
+        
     }
 
 private:
@@ -78,9 +99,32 @@ private:
         );
     }
 
+    void switchPlayer()
+    {
+        if (m_currentPlayer == Player.X)
+        {
+            m_currentPlayer = Player.O;
+        }
+        else
+        {
+            m_currentPlayer = Player.X;
+        }
+    }
+
     auto m_board = new Board();
     auto m_io = new Io;
 
-    auto m_counter = 0;
+    auto m_currentPlayer = Player.O;
     auto m_exitRequested = false;
+
+    unittest
+    {
+        auto game = new Game;
+        assert(game.m_currentPlayer == Player.O,
+        "Invalid default player!");
+
+        game.switchPlayer();
+        assert(game.m_currentPlayer == Player.X,
+        "Current player not switched!");
+    }
 }
