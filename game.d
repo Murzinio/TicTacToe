@@ -111,20 +111,18 @@ private:
         }
     }
 
-    auto m_board = new Board();
-    auto m_io = new Io;
-
-    auto m_currentPlayer = Player.O;
-    auto m_exitRequested = false;
-
     unittest
     {
         auto game = new Game;
-        assert(game.m_currentPlayer == Player.O,
-        "Invalid default player!");
 
         game.switchPlayer();
         assert(game.m_currentPlayer == Player.X,
         "Current player not switched!");
     }
+
+    auto m_board = new Board();
+    auto m_io = new Io;
+
+    auto m_currentPlayer = Player.O;
+    bool m_exitRequested;
 }

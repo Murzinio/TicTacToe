@@ -19,6 +19,31 @@ public:
         m_drawQueue.insertBack(to!(string)(elem));
     }
 
+    @system unittest
+    {
+        auto io = new Io;
+
+        immutable char[] charLine = "charline";
+        io.addToQueue(charLine);
+
+        string stringLine = "stringLine";
+        io.addToQueue(stringLine);
+
+        assert(io.m_drawQueue.back() == stringLine,
+        "Queue line different than expected!
+        Expected: '" ~ stringLine ~ "', Got: '" ~ io.m_drawQueue.back() ~ "'");
+        io.m_drawQueue.removeBack();
+
+        assert(io.m_drawQueue.back() == charLine,
+        "Queue line different than expected!
+        Expected: '" ~ charLine ~ "', Got: '" ~ io.m_drawQueue.back() ~ "'");
+        io.m_drawQueue.removeBack();
+
+        assert(io.m_drawQueue.empty(),
+        "Io m_drawQueue not empty!");
+    }
+
+
     /// Draws lines in order of insertion to queue.
     void drawAll()
     {
@@ -84,6 +109,27 @@ private:
         return false;
     }
 
+    @system unittest
+    {
+        auto io = new Io;
+        
+        string[] invalidInputs =
+        [
+            "abc", "a", "f",
+            "456", "342342341", 
+            "66", "9",
+            "61", "16",
+            "!", "*" 
+        ];
+
+        foreach(input; invalidInputs)
+        {
+            assert(!io.isInputValid(input),
+            "Invalid input accepted!
+            Input: '" ~ input ~ "'");
+        }
+    }
+
     bool isInRange(char numericInput)
     {
         foreach(elem; validInput)
@@ -97,52 +143,15 @@ private:
         return false;
     }
 
-    auto m_drawQueue = new DList!string;
-    immutable char[] validInput = 
-    [ 'q', '1', '2', '3', 'X', 'x', 'O', 'o' ];
-
-    @system unittest
+    unittest
     {
         auto io = new Io;
 
-        string[] invalidInputs =
-        [
-            "abc", "a", "f",
-            "456", "342342341", 
-            "66", "9",
-            "61", "16",
-            "!", "*" 
-        ];
-
-        foreach(input; invalidInputs)
-        {
-            assert(!io.isInputValid(input),
-            "Io isInputValid accepts invalid input!
-            Input: '" ~ input ~ "'");
-        }
-        immutable char outOfRange = '4';
-
-        assert(!io.isInRange(outOfRange),
-        "Io isInRange accepts invalid range!
-        Input: '" ~ outOfRange ~ "'");
-
-        immutable char[] charLine = "charline";
-        io.addToQueue(charLine);
-
-        string stringLine = "stringLine";
-        io.addToQueue(stringLine);
-
-        assert(io.m_drawQueue.back() == stringLine,
-        "Io m_drawQueue Invalid line.
-        Expected: '" ~ stringLine ~ "', Got: '" ~ io.m_drawQueue.back() ~ "'");
-        io.m_drawQueue.removeBack();
-
-        assert(io.m_drawQueue.back() == charLine,
-        "Io m_drawQueue Invalid line.
-        Expected: '" ~ charLine ~ "', Got: '" ~ io.m_drawQueue.back() ~ "'");
-        io.m_drawQueue.removeBack();
-
-        assert(io.m_drawQueue.empty(),
-        "Io m_drawQueue not empty!");
+        assert(!io.isInRange(4),
+        "Invalid numeric input range accepted!");
     }
+
+    auto m_drawQueue = new DList!string;
+    immutable char[] validInput = 
+    [ 'q', '1', '2', '3', 'X', 'x', 'O', 'o' ];
 }

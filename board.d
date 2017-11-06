@@ -16,17 +16,6 @@ enum FieldValue
 class Board
 {
 public:
-    this()
-    {
-        foreach(row; m_fields)
-        {
-            foreach(elem; row)
-            {
-                elem = FieldValue.X;
-            }
-        }
-    }
-
     /// Calls io to draw the board
     void draw()
     {
@@ -66,6 +55,14 @@ public:
         }
     }
 
+    unittest
+    {
+        auto board = new Board; 
+        board.setField(tuple(2, 2), FieldValue.O);
+        assert(board.m_fields[2][2] ==  FieldValue.O,
+         "Field set to value different than expected!");
+    }
+        
     /// Returns true if all fields are non-empty.
     bool areAllFieldsFilled()
     {
@@ -81,6 +78,25 @@ public:
         }
 
         return true;
+    }
+
+    unittest
+    {
+        auto board = new Board;
+        
+        assert(!board.areAllFieldsFilled,
+        "Expected empty fields!");
+
+        foreach(ref row; board.m_fields)
+        {
+            foreach(ref field; row)
+            {
+                field = FieldValue.X;
+            }
+        }
+
+        assert(board.areAllFieldsFilled(),
+        "Expected all fields filled!");
     }
 
     /// Returns true if any three adjacent fields (vertical, horizontal or diagonal)
@@ -128,11 +144,23 @@ private:
         return true;
     }
 
+    unittest
+    {
+        auto board = new Board;
+
+        board.setField([1, 0], FieldValue.O);
+        board.setField([1, 1], FieldValue.O);
+        board.setField([1, 2], FieldValue.O);
+
+        assert(board.rowEqual(1),
+        "Expected equal row!");
+    }
+
     bool columnEqual(size_t columnNumber)
     {
         for (size_t i; i < m_fields[0].length; ++i)
         {
-            if (m_fields[columnNumber][i] == FieldValue.EMPTY)
+            if (m_fields[i][columnNumber] == FieldValue.EMPTY)
             {
                 return false;
             }
@@ -145,6 +173,18 @@ private:
         }
 
         return true;
+    }
+
+    unittest
+    {
+        auto board = new Board;
+
+        board.m_fields[0][0] = FieldValue.X;
+        board.m_fields[1][0] = FieldValue.X;
+        board.m_fields[2][0] = FieldValue.X;
+
+        assert(board.columnEqual(0),
+        "Expected equal column!");
     }
 
     bool firstDiagonalFilled()
@@ -184,7 +224,7 @@ private:
         
         bool secondEqual;
 
-        if (firstDiagonalFilled)
+        if (secondDiagonalFilled)
         {
             secondEqual =
             (m_fields[0][2] == m_fields[1][1]
@@ -192,6 +232,18 @@ private:
         }
         
         return firstEqual || secondEqual;
+    }
+
+    unittest
+    {
+        auto board = new Board;
+
+        board.m_fields[0][2] = FieldValue.X;
+        board.m_fields[1][1] = FieldValue.X;
+        board.m_fields[2][0] = FieldValue.X;
+
+        assert(board.anyDiagonalEqual(),
+        "Expect equal diagonal!");
     }
 
     FieldValue[3][3] m_fields =
@@ -202,33 +254,4 @@ private:
     ];
 
     auto m_io = new Io();
-
-    @safe unittest
-    {
-        auto board = new Board;
-
-        board.setField(tuple(2, 2), FieldValue.O);
-        assert(board.m_fields[2][2] ==  FieldValue.O, "invalid field set in setField");
-
-        assert(!board.areAllFieldsFilled(),
-        "Not all fields should be filled!");
-
-        foreach(ref row; board.m_fields)
-        {
-            foreach(ref field; row)
-            {
-                field = FieldValue.X;
-            }
-        }
-
-        assert(board.areAllFieldsFilled(),
-        "All fields should be filled!");
-
-        board.setField([1, 0], FieldValue.O);
-        board.setField([1, 1], FieldValue.O);
-        board.setField([1, 2], FieldValue.O);
-
-        assert(board.rowEqual(1),
-        "Row not equal to values set!");
-    }
 }
